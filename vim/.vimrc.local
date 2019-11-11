@@ -1,0 +1,95 @@
+"***********************
+"" 	Vim Plug
+"***********************
+let vimplug_exists=expand('~/.vim/autoload/plug.vim')
+
+if !filereadable(vimplug_exists)
+  if !executable("curl")
+    echoerr "You have to install curl or first install vim-plug yourself!"
+    execute "q!"
+  endif
+  echo "Installing Vim-Plug..."
+  echo ""
+  silent exec "!\curl -fLo " . vimplug_exists . " --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+  let g:not_finish_vimplug = "yes"
+
+  autocmd VimEnter * PlugInstall
+endif
+
+" Required:
+call plug#begin(expand('~/.vim/plugged'))
+
+"*****************************************************************************
+"" Plug install packages
+"*****************************************************************************
+" ruby/rails
+Plug 'vim-ruby/vim-ruby'
+Plug 'tpope/vim-rails'
+Plug 'w0rp/ale'
+Plug 'vim-airline/vim-airline'
+
+" searching
+if isdirectory('/usr/local/opt/fzf')
+ 	Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
+else
+ 	Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --bin' }
+ 	Plug 'junegunn/fzf.vim'
+endif
+
+" theme
+Plug 'mhartington/oceanic-next'
+
+"***************************
+""	Appearance
+"***************************
+
+set number
+set ruler
+set encoding=UTF-8
+set background=dark
+set t_Co=256
+
+" switch cursor to line when in insert mode, and block when not
+set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
+\,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor
+\,sm:block-blinkwait175-blinkoff150-blinkon175
+
+syntax on
+
+filetype plugin indent on
+filetype on
+filetype indent on
+
+let g:oceanic_next_terminal_bold = 1
+let g:oceanic_next_terminal_italic = 1
+
+"***************************
+""	Key Mappings
+"***************************
+
+" ruby
+autocmd FileType ruby setlocal expandtab shiftwidth=2 tabstop=2
+autocmd FileType eruby setlocal expandtab shiftwidth=2 tabstop=2
+
+nnoremap <silent> <C-z> :FZF<CR>
+
+"***************************
+""	ALE
+"***************************
+let g:ale_lint_on_text_changed = 1
+let g:ale_lint_on_save = 1
+let g:ale_set_loclist = 1
+
+let g:ale_linters_explicit = 1
+let g:ale_fixers = {'ruby': ['remove_trailing_lines','trim_whitespace','rubocop']}
+let g:ale_linters = {'ruby': ['rubocop', 'ruby']}
+let g:ale_ruby_rubocop_executable = '$HOME/.rbenv/shims/rubocop'
+let g:ruby_indent_assignment_style = 'variable'
+let g:airline#extensions#ale#enabled = 1 
+
+"**************************
+""	Vim-Ruby
+"***************************
+let g:ruby_indent_access_modifier_style = 'normal'
+let g:ruby_indent_assignment_style = 'variable'
+let g:ruby_indent_block_style = 'do'
