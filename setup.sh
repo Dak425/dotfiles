@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+DOTFILES=$HOME/.dotfiles
+
 fancy_echo() {
 	printf "\n%b\n" "$1"
 }
@@ -14,7 +16,24 @@ install_base_packages() {
 }
 
 pull_dotfiles() {
-	git clone https://github.com/Dak425/dotfiles.git $HOME/.dotfiles
+	git clone https://github.com/Dak425/dotfiles.git $DOTFILES
+}
+
+create_symlinks() {
+  LINKS=("$HOME/.vimrc:$DOTFILES/vim/vimrc"
+        "$HOME/.config/nvim/init.vim:$DOTFILES/vim/vimrc"
+        "$HOME/.vim/colors:$DOTFILES/vim/colors"
+        "$HOME/.zshrc:$DOTFILES/zsh/zshrc")
+  for link in "${LINKS[@]}"; do
+    KEY=${link%%:*}
+    VALUE=${link#*:}
+    if [ -e "$KEY" ]; then
+      fancy_echo "${KEY} already exists, skipping..."
+    else
+      fancy_echo "Creating symlink for $KEY"
+      ln -s "${VALUE}" "${KEY}"
+    fi
+  done
 }
 
 setup_zsh() {
@@ -22,12 +41,9 @@ setup_zsh() {
 		fancy_echo "Installng Oh-My-Zsh ..."
 		sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 	fi
-	fancy_echo "Creating symlink for .zshrc ..."
-	ln -sf ~/.dotfiles/zsh/.zshrc ~/.zshrc
-
 }
 
-install_rbenv() {
+setup_rbenv() {
 	if [[ ! -d "$HOME/.rbenv" ]]; then
 		fancy_echo "Installing rbenv ..."
 		git clone https://github.com/sstephenson/rbenv.git "$HOME/.rbenv"
@@ -62,13 +78,15 @@ install_go() {
         	tar -C $HOME/.bin -xzf golang.tar.gz
         	rm golang.tar.gz
 	fi
+  prefix_to_path "$HOME/.bin/go/bin"
 }
 
 run_setup() {
 	install_base_packages
 	pull_dotfiles
-	install_oh_my_zsh
-	install_rbenv	
+  create_symlinks
+	setup_zsh
+	setup_rbenv	
 	install_ruby_version "2.6.5"
 	install_go "1.13.3"
 }
