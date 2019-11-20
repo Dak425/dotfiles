@@ -1,0 +1,26 @@
+" show line numbers
+set number
+
+" enable syntax highlighting
+syntax on
+
+" wrap text
+set wrap
+
+" formatting
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set autoindent
+set smartindent
+
+" set color scheme
+colorscheme railscast
+
+" encoding
+set encoding=utf-8
+
+" mode display options
+set showmode
+set showcmd
