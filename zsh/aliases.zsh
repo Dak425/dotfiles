@@ -8,6 +8,9 @@ alias rgmo='rails g model'
 alias rgmi='rails g migration'
 alias rgv='rails g view'
 alias rgj='rails g job'
+alias rgc='rails g controller'
+
+alias rdc='rails d controller'
 
 # rake/rails
 alias rdbm='rake db:migrate'
